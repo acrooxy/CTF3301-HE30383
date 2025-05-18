@@ -1,0 +1,118 @@
+START Program
+
+DECLARE lightsOn AS BOOLEAN = FALSE
+DECLARE currentTemperature AS INTEGER = 20
+DECLARE musicPlaying AS BOOLEAN = FALSE
+DECLARE musicVolume AS INTEGER = 50
+DECLARE isRunning AS BOOLEAN = TRUE
+
+FUNCTION Main()
+
+    SET Console Encoding to UTF-8
+
+    DISPLAY Warning Message: "To run this program correctly, use Windows Terminal"
+    WAIT for user to press any key
+    CLEAR screen
+
+    DISPLAY "Welcome to Smart Home"
+
+    CALL DisplayStatus()
+
+    WHILE isRunning IS TRUE DO
+        DISPLAY "Available Commands"
+        DISPLAY "1. switch on - Turn on the lights"
+        DISPLAY "2. switch off - Turn off the lights"
+        DISPLAY "3. play music - Start playing music"
+        DISPLAY "4. stop music - Stop the music"
+        DISPLAY "5. set temperature - Set the room temperature"
+        DISPLAY "6. set volume - Set the music volume"
+        DISPLAY "7. adjust volume - Adjust the volume (+/-)"
+        DISPLAY "8. exit - Exit the program"
+        PROMPT "Your choice: "
+        READ choice1
+
+        SWITCH choice1
+            CASE "1" OR "switch on"
+                SET lightsOn TO TRUE
+                BREAK
+
+            CASE "2" OR "switch off"
+                SET lightsOn TO FALSE
+                BREAK
+
+            CASE "3" OR "play music"
+                SET musicPlaying TO TRUE
+                BREAK
+
+            CASE "4" OR "stop music"
+                SET musicPlaying TO FALSE
+                BREAK
+
+            CASE "5" OR "set temperature"
+                PROMPT "Enter desired temperature (14 - 28): "
+                READ temperature
+                IF temperature < 14 THEN
+                    DISPLAY "The selected temperature is too low."
+                    WAIT for user to press any key
+                ELSE IF temperature > 28 THEN
+                    DISPLAY "The selected temperature is too high."
+                    WAIT for user to press any key
+                ELSE
+                    SET currentTemperature TO temperature
+                END IF
+                BREAK
+
+            CASE "6" OR "set volume"
+                PROMPT "Enter volume level (0 - 100): "
+                READ volume
+                IF volume BETWEEN 0 AND 100 THEN
+                    SET musicVolume TO volume
+                ELSE
+                    DISPLAY "Invalid volume. Please enter a value between 0 and 100."
+                END IF
+                BREAK
+
+            CASE "7" OR "adjust volume"
+                PROMPT "Enter '+' to increase or '-' to decrease the volume: "
+                READ adjustment
+                COUNT plusCount AS NUMBER OF '+' IN adjustment
+                COUNT minusCount AS NUMBER OF '-' IN adjustment
+
+                IF plusCount > 0 THEN
+                    SET increase TO plusCount * 5
+                    SET musicVolume TO MIN(100, musicVolume + increase)
+                    DISPLAY "Volume increased by increase%. Current volume: musicVolume%."
+                END IF
+
+                IF minusCount > 0 THEN
+                    SET decrease TO minusCount * 5
+                    SET musicVolume TO MAX(0, musicVolume - decrease)
+                    DISPLAY "Volume decreased by decrease%. Current volume: musicVolume%."
+                END IF
+                BREAK
+
+            CASE "8" OR "exit"
+                SET isRunning TO FALSE
+                DISPLAY "Bye"
+                EXIT Program
+                BREAK
+
+            DEFAULT
+                DISPLAY "Invalid command."
+        END SWITCH
+
+        CALL DisplayStatus()
+    END WHILE
+END FUNCTION
+
+FUNCTION DisplayStatus()
+    CLEAR screen
+    DISPLAY "=== Current Home Status ==="
+    DISPLAY "Last Update: CURRENT TIME"
+    DISPLAY "Lights: ON if lightsOn IS TRUE ELSE OFF"
+    DISPLAY "Temperature: currentTemperature°C"
+    DISPLAY "Music: PLAYING if musicPlaying IS TRUE ELSE STOPPED"
+    DISPLAY "Volume: musicVolume%"
+END FUNCTION
+
+END Program
